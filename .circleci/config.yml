@@ -1,4 +1,7 @@
-version: 2
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.2.0
 
 references:
   npm_restore_cache: &npm_restore_cache
@@ -23,12 +26,12 @@ references:
       command: |
         sudo dpkg --add-architecture i386
         sudo apt update
-        sudo apt -y install libxkbfile-dev libxkbfile-dev:i386 libx11-dev libx11-dev:i386 libxss-dev gcc-multilib g++-multilib rpm
+        sudo apt -y install libxkbfile-dev libxkbfile-dev:i386 libxext-dev libx11-dev libx11-dev:i386 libxss-dev gcc-multilib g++-multilib rpm
 
 jobs:
   build:
     docker:
-      - image: circleci/node:10.15.0
+      - image: circleci/node:12.14.0
     shell: /bin/bash --login
     working_directory: ~/simplenote
     steps:
@@ -37,12 +40,11 @@ jobs:
       - run:
           name: Decrypt assets
           command: |
+            openssl aes-256-cbc -md md5 -d -in ./resources/certificates/win.p12.enc -out ./resources/certificates/win.p12 -k ${SECRETS_ENCRYPTION_KEY}
             openssl aes-256-cbc -md md5 -d -in ./resources/certificates/mac.p12.enc -out ./resources/certificates/mac.p12 -k ${SECRETS_ENCRYPTION_KEY}
             openssl aes-256-cbc -md md5 -d -in ./resources/secrets/config.json.enc -out ./config.json -k ${SECRETS_ENCRYPTION_KEY}
       - *npm_restore_cache
       - run: npm ci
-      - run: patch -p1 < ./resources/macos/macPackager-patch.diff
-      - run: patch -p1 < ./resources/macos/scheme-patch.diff
       - run: make build
       - run: make lint
       - run: make test
@@ -52,7 +54,7 @@ jobs:
 
   linux:
     docker:
-      - image: circleci/node:10.15.0
+      - image: circleci/node:12.14.0
     working_directory: ~/simplenote
     steps:
       - checkout
@@ -61,8 +63,6 @@ jobs:
       - *npm_restore_cache
       - *install_linux_deps
       - run: npm ci
-      - run: patch -p1 < ./resources/macos/macPackager-patch.diff
-      - run: patch -p1 < ./resources/macos/scheme-patch.diff
       - *npm_save_cache
       - run: make package-linux SKIP_BUILD=true
       - run:
@@ -87,8 +87,6 @@ jobs:
           at: /Users/distiller/simplenote
       - *npm_restore_cache
       - run: npm ci
-      - run: patch -p1 < ./resources/macos/macPackager-patch.diff
-      - run: patch -p1 < ./resources/macos/scheme-patch.diff
       - *npm_save_cache
       - run:
           name: Build Mac
@@ -108,6 +106,51 @@ jobs:
           paths:
             - release
 
+  windows:
+    executor:
+      name: win/default
+    working_directory: C:\Users\circleci\simplenote-electron
+    environment:
+      CSC_FOR_PULL_REQUEST: true
+    steps:
+      - checkout
+      - attach_workspace:
+          at: C:\Users\circleci\simplenote-electron
+      - run:
+          name: Install make
+          command: cinst make
+      - run:
+          name: Install node version
+          command: |
+            $NODE_VERSION = Get-Content .\calypso\.nvmrc
+            nvm install $NODE_VERSION
+            nvm use $NODE_VERSION
+      - run:
+          name: Npm install
+          command: |
+            # The release of nodejs currently being used by Calypso includes a buggy version 
+            # of node-gyp for Windows. This workaround unblocks Windows builds until Calypso node 
+            # includes node-gyp >= 6.0.1, at which point this snippet and node-gyp in simplenote-electron 
+            # devDependencies can be reverted.
+            # Ref: https://github.com/nodejs/node-gyp/issues/1933
+            npm config set node_gyp "$(Get-Location)\node_modules\node-gyp\bin\node-gyp.js"
+            npm ci
+      - run:
+          name: Build windows
+          command: |
+            # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
+            # Ref: https://travis-ci.community/t/codesigning-on-windows/
+            # 
+            # Fix: Import .p12 into the local certificate store. Sign Tool will use 
+            # package.json's `certificateSubjectName` to find the imported cert.
+            Import-PfxCertificate -FilePath C:\Users\circleci\simplenote-electron\resources\certificates\win.p12 -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
+            make package-win32 IS_WINDOWS=true
+      - persist_to_workspace:
+          root: C:\Users\circleci\simplenote-electron
+          paths:
+            - release\*.exe
+            - release\*.appx
+            - release\*.yml
   artifacts:
     docker:
       - image: buildpack-deps:trusty
@@ -137,6 +180,14 @@ workflows:
             tags:
               only: /.*/
       - mac:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: webapp
+            tags:
+              only: /.*/
+      - windows:
           requires:
             - build
           filters:
