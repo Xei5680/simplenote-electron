@@ -61,6 +61,7 @@ export type ToggleSimperiumConnectionStatus = Action<
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE',
   { simperiumConnected: boolean }
 >;
+export type SetEditorMode = Action<'SET_EDITOR_MODE', { mode: T.EditorMode }>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type SelectNote = Action<'SELECT_NOTE', { note: T.NoteEntity }>;
 
@@ -71,6 +72,7 @@ export type ActionType =
   | SetAccountName
   | SetAuth
   | SetAutoHideMenuBar
+  | SetEditorMode
   | SetFocusMode
   | SetFontSize
   | SetLineLength

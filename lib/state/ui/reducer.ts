@@ -1,10 +1,25 @@
 import { difference, union } from 'lodash';
 import { AnyAction, combineReducers } from 'redux';
+
 import * as A from '../action-types';
 import * as T from '../../types';
 
 const defaultVisiblePanes = ['editor', 'noteList'];
 const emptyList: unknown[] = [];
+
+const editorMode: A.Reducer<T.EditorMode> = (
+  state = 'edit',
+  action: AnyAction
+) => {
+  switch (action.type) {
+    case 'SET_EDITOR_MODE':
+    case 'App.setEditorMode': {
+      return action.mode;
+    }
+    default:
+      return state;
+  }
+};
 
 const filteredNotes: A.Reducer<T.NoteEntity[]> = (
   state = emptyList as T.NoteEntity[],
@@ -56,6 +71,7 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
 };
 
 export default combineReducers({
+  editorMode,
   filteredNotes,
   note,
   simperiumConnected,
