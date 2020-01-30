@@ -38,7 +38,6 @@ export type AppState = {
   previousIndex: number;
   revision: T.NoteEntity | null;
   searchFocus: boolean;
-  shouldPrint: boolean;
   showNavigation: boolean;
   showNoteInfo: boolean;
   showTrash: boolean;
