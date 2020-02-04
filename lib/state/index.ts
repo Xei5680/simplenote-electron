@@ -72,7 +72,8 @@ export const store = createStore(
         [path]: omit(state[path], 'focusModeEnabled'),
       }),
     }),
-    applyMiddleware(thunk, uiMiddleware)
+    applyMiddleware(thunk, uiMiddleware),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   )
 );
 

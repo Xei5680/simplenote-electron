@@ -8,7 +8,7 @@ let searchTimeout: NodeJS.Timeout;
 
 export const middleware: Middleware<{}, S.State, Dispatch> = store => {
   const updateNotes = () =>
-    store.dispatch(filterAction(filterNotes(store.getState().appState)));
+    store.dispatch(filterAction(filterNotes(store.getState())));
 
   return next => (action: AnyAction) => {
     const result = next(action);
@@ -30,9 +30,9 @@ export const middleware: Middleware<{}, S.State, Dispatch> = store => {
 
       // on updating the search field we should delay the update
       // so we don't waste our CPU time and lose responsiveness
-      case 'App.search':
+      case 'SEARCH':
         clearTimeout(searchTimeout);
-        if ('App.search' === action.type && !action.filter) {
+        if ('SEARCH' === action.type && !action.searchQuery) {
           // if we just cleared out the search bar then immediately update
           updateNotes();
         } else {

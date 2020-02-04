@@ -14,8 +14,9 @@ import NewNoteIcon from '../icons/new-note';
 import SearchField from '../search-field';
 import MenuIcon from '../icons/menu';
 import { withoutTags } from '../utils/filter-notes';
+import { search } from '../state/ui/actions';
 
-const { newNote, search, toggleNavigation } = appState.actionCreators;
+const { newNote, toggleNavigation } = appState.actionCreators;
 const { recordEvent } = tracks;
 
 type Props = {
@@ -50,7 +51,7 @@ const mapStateToProps = ({ appState: state }) => ({
 
 const mapDispatchToProps = (dispatch, { noteBucket, onNoteOpened }) => ({
   onNewNote: (content: string) => {
-    dispatch(search({ filter: '' }));
+    dispatch(search(''));
     dispatch(newNote({ noteBucket, content }));
     onNoteOpened();
     recordEvent('list_note_created');

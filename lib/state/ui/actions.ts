@@ -22,6 +22,11 @@ export const toggleSimperiumConnectionStatus: A.ActionCreator<A.ToggleSimperiumC
   simperiumConnected,
 });
 
+export const search: A.ActionCreator<A.Search> = (query: string) => ({
+  type: 'SEARCH',
+  query,
+});
+
 export const selectNote: A.ActionCreator<A.SelectNote> = (
   note: T.NoteEntity
 ) => ({ type: 'SELECT_NOTE', note });
