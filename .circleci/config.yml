@@ -128,12 +128,6 @@ jobs:
       - run:
           name: Npm install
           command: |
-            # The release of nodejs currently being used by Calypso includes a buggy version 
-            # of node-gyp for Windows. This workaround unblocks Windows builds until Calypso node 
-            # includes node-gyp >= 6.0.1, at which point this snippet and node-gyp in simplenote-electron 
-            # devDependencies can be reverted.
-            # Ref: https://github.com/nodejs/node-gyp/issues/1933
-            npm config set node_gyp "$(Get-Location)\node_modules\node-gyp\bin\node-gyp.js"
             npm ci
       - run:
           name: Build windows
