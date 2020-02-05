@@ -5,13 +5,13 @@ import appState from '../flux/app-state';
 import TagField from '../tag-field';
 import { property } from 'lodash';
 import NoteDetail from '../note-detail';
-import { setEditMode } from '../state/ui/actions';
+import { toggleEditMode } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
 
 type DispatchProps = {
-  setEditMode: (editMode: boolean) => any;
+  toggleEditMode: () => any;
 };
 
 type StateProps = {
@@ -75,7 +75,7 @@ export class NoteEditor extends Component<Props> {
       'p' === key.toLowerCase() &&
       this.markdownEnabled
     ) {
-      this.props.setEditMode(!this.props.editMode);
+      this.props.toggleEditMode();
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -183,7 +183,7 @@ const { closeNote } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   closeNote: () => dispatch(closeNote()),
-  setEditMode: editMode => dispatch(setEditMode(editMode)),
+  toggleEditMode: () => dispatch(toggleEditMode()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);

@@ -30,9 +30,8 @@ export const selectNote: A.ActionCreator<A.SelectNote> = (
   note: T.NoteEntity
 ) => ({ type: 'SELECT_NOTE', note });
 
-export const setEditMode: A.ActionCreator<A.SetEditMode> = editMode => ({
-  type: 'SET_EDIT_MODE',
-  editMode,
+export const toggleEditMode: A.ActionCreator<A.ToggleEditMode> = () => ({
+  type: 'TOGGLE_EDIT_MODE',
 });
 
 export const toggleTagDrawer: A.ActionCreator<A.ToggleTagDrawer> = (

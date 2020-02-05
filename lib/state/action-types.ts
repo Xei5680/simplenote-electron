@@ -62,7 +62,7 @@ export type ToggleSimperiumConnectionStatus = Action<
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE',
   { simperiumConnected: boolean }
 >;
-export type SetEditMode = Action<'SET_EDIT_MODE', { editMode: boolean }>;
+export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type SelectNote = Action<'SELECT_NOTE', { note: T.NoteEntity }>;
 
@@ -86,7 +86,7 @@ export type ActionType =
   | SetTheme
   | SetUnsyncedNoteIds
   | SetWPToken
-  | SetEditMode
+  | ToggleEditMode
   | ToggleSimperiumConnectionStatus
   | ToggleTagDrawer;
 

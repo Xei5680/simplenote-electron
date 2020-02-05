@@ -5,7 +5,6 @@ import analytics from './analytics';
 import appState from './flux/app-state';
 import { toggleFocusMode } from './state/settings/actions';
 import DialogTypes from '../shared/dialog-types';
-import { setEditMode } from './state/ui/actions';
 
 import * as S from './state';
 import * as T from './types';
@@ -34,7 +33,6 @@ type DispatchProps = {
   deleteNoteForever: (args: ListChanger) => any;
   noteRevisions: (args: NoteChanger) => any;
   restoreNote: (args: ListChanger) => any;
-  setEditMode: ({ mode }: { mode: boolean }) => any;
   setIsViewingRevisions: (isViewingRevisions: boolean) => any;
   shareNote: () => any;
   toggleFocusMode: () => any;
@@ -91,8 +89,6 @@ export class NoteToolbarContainer extends Component<Props> {
     analytics.tracks.recordEvent('editor_share_dialog_viewed');
   };
 
-  onSetEditMode = (mode: boolean) => this.props.setEditMode(mode);
-
   render() {
     const { isViewingRevisions, toolbar, revisionOrNote } = this.props;
 
@@ -145,7 +141,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   deleteNoteForever: args => dispatch(deleteNoteForever(args)),
   noteRevisions: args => dispatch(noteRevisions(args)),
   restoreNote: args => dispatch(restoreNote(args)),
-  setEditMode: mode => dispatch(setEditMode(mode)),
   setIsViewingRevisions: (isViewingRevisions: boolean) => {
     dispatch(setIsViewingRevisions({ isViewingRevisions }));
   },

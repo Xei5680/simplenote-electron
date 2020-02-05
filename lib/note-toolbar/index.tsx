@@ -12,13 +12,13 @@ import RevisionsIcon from '../icons/revisions';
 import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
-import { setEditMode } from '../state/ui/actions';
+import { toggleEditMode } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
 
 type DispatchProps = {
-  setEditMode: (editMode: boolean) => any;
+  toggleEditMode: () => any;
 };
 
 type StateProps = {
@@ -72,10 +72,6 @@ export class NoteToolbar extends Component<Props> {
     );
   }
 
-  setEditMode = () => {
-    this.props.setEditMode(!this.props.editMode);
-  };
-
   renderNormal = () => {
     const { editMode, markdownEnabled, note } = this.props;
     return !note ? (
@@ -103,7 +99,7 @@ export class NoteToolbar extends Component<Props> {
             <div className="note-toolbar__button">
               <IconButton
                 icon={!editMode ? <PreviewStopIcon /> : <PreviewIcon />}
-                onClick={this.setEditMode}
+                onClick={this.props.toggleEditMode}
                 title="Preview • Ctrl+Shift+P"
               />
             </div>
@@ -186,7 +182,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  setEditMode: editMode => dispatch(setEditMode(editMode)),
+  toggleEditMode: () => dispatch(toggleEditMode()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);

@@ -9,8 +9,8 @@ const emptyList: unknown[] = [];
 
 const editMode: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
-    case 'SET_EDIT_MODE': {
-      return action.editMode;
+    case 'TOGGLE_EDIT_MODE': {
+      return !state;
     }
     case 'CREATE_NOTE':
       return true;
