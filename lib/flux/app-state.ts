@@ -190,12 +190,6 @@ export const actionMap = new ActionMap({
       });
     },
 
-    // search(state: AppState, { filter }: { filter: string }) {
-    //   return update(state, {
-    //     filter: { $set: filter },
-    //   });
-    // },
-
     newNote: {
       creator({
         noteBucket,
