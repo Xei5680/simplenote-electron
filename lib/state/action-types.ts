@@ -52,7 +52,7 @@ export type SetWPToken = Action<'setWPToken', { token: string }>;
  * Normal action types
  */
 export type FilterNotes = Action<'FILTER_NOTES', { notes: T.NoteEntity[] }>;
-export type Search = Action<'SEARCH', { query: string }>;
+export type Search = Action<'SEARCH', { searchQuery: string }>;
 export type SetAuth = Action<'AUTH_SET', { status: AuthState }>;
 export type SetUnsyncedNoteIds = Action<
   'SET_UNSYNCED_NOTE_IDS',

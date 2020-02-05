@@ -17,7 +17,7 @@ const unsyncedNoteIds: A.Reducer<T.EntityId[]> = (
 ) => ('SET_UNSYNCED_NOTE_IDS' === action.type ? action.noteIds : state);
 
 const searchQuery: A.Reducer<string> = (state = '', action) =>
-  'SEARCH' === action.type ? action.query : state;
+  'SEARCH' === action.type ? action.searchQuery : state;
 
 const simperiumConnected: A.Reducer<boolean> = (state = false, action) =>
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE' === action.type
