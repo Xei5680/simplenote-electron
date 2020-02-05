@@ -7,12 +7,13 @@ import * as T from '../../types';
 const defaultVisiblePanes = ['editor', 'noteList'];
 const emptyList: unknown[] = [];
 
-const editorMode: A.Reducer<T.EditorMode> = (state = 'edit', action) => {
+const editMode: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
-    case 'SET_EDITOR_MODE':
-    case 'App.setEditorMode': {
-      return action.mode;
+    case 'SET_EDIT_MODE': {
+      return action.editMode;
     }
+    case 'CREATE_NOTE':
+      return true;
     default:
       return state;
   }
@@ -68,7 +69,7 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
 };
 
 export default combineReducers({
-  editorMode,
+  editMode,
   filteredNotes,
   note,
   simperiumConnected,

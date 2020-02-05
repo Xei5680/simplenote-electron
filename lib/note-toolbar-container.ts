@@ -5,7 +5,7 @@ import analytics from './analytics';
 import appState from './flux/app-state';
 import { toggleFocusMode } from './state/settings/actions';
 import DialogTypes from '../shared/dialog-types';
-import { setEditorMode } from './state/ui/actions';
+import { setEditMode } from './state/ui/actions';
 
 import * as S from './state';
 import * as T from './types';
@@ -18,7 +18,6 @@ type OwnProps = {
 
 type StateProps = {
   isViewingRevisions: boolean;
-  editorMode: T.EditorMode;
   notes: T.NoteEntity[];
   revisionOrNote: T.NoteEntity | null;
 };
@@ -35,7 +34,7 @@ type DispatchProps = {
   deleteNoteForever: (args: ListChanger) => any;
   noteRevisions: (args: NoteChanger) => any;
   restoreNote: (args: ListChanger) => any;
-  setEditorMode: ({ mode }: { mode: T.EditorMode }) => any;
+  setEditMode: ({ mode }: { mode: boolean }) => any;
   setIsViewingRevisions: (isViewingRevisions: boolean) => any;
   shareNote: () => any;
   toggleFocusMode: () => any;
@@ -92,21 +91,15 @@ export class NoteToolbarContainer extends Component<Props> {
     analytics.tracks.recordEvent('editor_share_dialog_viewed');
   };
 
-  onSetEditorMode = (mode: T.EditorMode) => this.props.setEditorMode(mode);
+  onSetEditMode = (mode: boolean) => this.props.setEditMode(mode);
 
   render() {
-    const {
-      editorMode,
-      isViewingRevisions,
-      toolbar,
-      revisionOrNote,
-    } = this.props;
+    const { isViewingRevisions, toolbar, revisionOrNote } = this.props;
 
     const handlers = {
       onCloseNote: this.onCloseNote,
       onDeleteNoteForever: this.onDeleteNoteForever,
       onRestoreNote: this.onRestoreNote,
-      onSetEditorMode: this.onSetEditorMode,
       onShowNoteInfo: this.props.toggleNoteInfo,
       onShowRevisions: this.onShowRevisions,
       onShareNote: this.onShareNote,
@@ -123,16 +116,15 @@ export class NoteToolbarContainer extends Component<Props> {
       ? revisionOrNote.data.systemTags.includes('markdown')
       : false;
 
-    return cloneElement(toolbar, { ...handlers, editorMode, markdownEnabled });
+    return cloneElement(toolbar, { ...handlers, markdownEnabled });
   }
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
   appState,
-  ui: { filteredNotes, note, editorMode },
+  ui: { filteredNotes, note },
 }) => ({
   isViewingRevisions: appState.isViewingRevisions,
-  editorMode,
   notes: filteredNotes,
   revisionOrNote: appState.revision || note,
 });
@@ -153,7 +145,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   deleteNoteForever: args => dispatch(deleteNoteForever(args)),
   noteRevisions: args => dispatch(noteRevisions(args)),
   restoreNote: args => dispatch(restoreNote(args)),
-  setEditorMode: mode => dispatch(setEditorMode(mode)),
+  setEditMode: mode => dispatch(setEditMode(mode)),
   setIsViewingRevisions: (isViewingRevisions: boolean) => {
     dispatch(setIsViewingRevisions({ isViewingRevisions }));
   },

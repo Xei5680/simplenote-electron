@@ -51,6 +51,7 @@ export type SetWPToken = Action<'setWPToken', { token: string }>;
 /*
  * Normal action types
  */
+export type CreateNote = Action<'CREATE_NOTE'>;
 export type FilterNotes = Action<'FILTER_NOTES', { notes: T.NoteEntity[] }>;
 export type SetAuth = Action<'AUTH_SET', { status: AuthState }>;
 export type SetUnsyncedNoteIds = Action<
@@ -61,18 +62,18 @@ export type ToggleSimperiumConnectionStatus = Action<
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE',
   { simperiumConnected: boolean }
 >;
-export type SetEditorMode = Action<'SET_EDITOR_MODE', { mode: T.EditorMode }>;
+export type SetEditMode = Action<'SET_EDIT_MODE', { editMode: boolean }>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type SelectNote = Action<'SELECT_NOTE', { note: T.NoteEntity }>;
 
 export type ActionType =
+  | CreateNote
   | LegacyAction
   | FilterNotes
   | SelectNote
   | SetAccountName
   | SetAuth
   | SetAutoHideMenuBar
-  | SetEditorMode
   | SetFocusMode
   | SetFontSize
   | SetLineLength
@@ -85,6 +86,7 @@ export type ActionType =
   | SetTheme
   | SetUnsyncedNoteIds
   | SetWPToken
+  | SetEditMode
   | ToggleSimperiumConnectionStatus
   | ToggleTagDrawer;
 
@@ -181,7 +183,6 @@ type LegacyAction =
   | Action<'App.selectTag', { tag: T.TagEntity }>
   | Action<'App.selectTagAndSElectFirstNote'>
   | Action<'App.selectTrash'>
-  | Action<'App.setEditorMode', { mode: T.EditorMode }>
   | Action<'App.setIsViewingRevisions', { isReviewingRevisions: boolean }>
   | Action<'App.setRevision', { revision: T.NoteEntity }>
   | Action<'App.setSearchFocus', { searchFocus: boolean }>

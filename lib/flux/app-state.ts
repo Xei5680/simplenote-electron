@@ -135,8 +135,6 @@ export const actionMap = new ActionMap({
       });
     },
 
-    setEditorMode() {},
-
     showDialog(state: AppState, { dialog }) {
       const { type, multiple = false, title, ...dialogProps } = dialog;
 
@@ -205,10 +203,6 @@ export const actionMap = new ActionMap({
 
           if (state.showTrash) {
             dispatch(this.action('showAllNotes'));
-          }
-
-          if (settings.markdownEnabled) {
-            dispatch(this.action('setEditorMode', { mode: 'edit' }));
           }
 
           // insert a new note into the store and select it
