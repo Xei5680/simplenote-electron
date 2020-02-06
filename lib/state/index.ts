@@ -5,6 +5,8 @@
  */
 
 import {
+  Dispatch as ReduxDispatch,
+  Middleware as ReduxMiddleware,
   Store as ReduxStore,
   compose,
   createStore,
@@ -98,5 +100,12 @@ export type MapDispatch<
         ...args: Parameters<DispatchProps[P]>
       ) => A.ActionType;
     };
+
+export type Dispatch = ReduxDispatch<A.ActionType>;
+export type Middleware<Extension = {}> = ReduxMiddleware<
+  Extension,
+  State,
+  Dispatch
+>;
 
 export default store;

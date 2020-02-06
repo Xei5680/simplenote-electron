@@ -1,16 +1,16 @@
-import { AnyAction, Dispatch, Middleware } from 'redux';
 import { filterNotes as filterAction } from './actions';
 import filterNotes from '../../utils/filter-notes';
 
+import * as A from '../action-types';
 import * as S from '../';
 
 let searchTimeout: NodeJS.Timeout;
 
-export const middleware: Middleware<{}, S.State, Dispatch> = store => {
+export const middleware: S.Middleware = store => {
   const updateNotes = () =>
     store.dispatch(filterAction(filterNotes(store.getState())));
 
-  return next => (action: AnyAction) => {
+  return next => (action: A.ActionType) => {
     const result = next(action);
 
     switch (action.type) {
@@ -32,7 +32,7 @@ export const middleware: Middleware<{}, S.State, Dispatch> = store => {
       // so we don't waste our CPU time and lose responsiveness
       case 'SEARCH':
         clearTimeout(searchTimeout);
-        if ('SEARCH' === action.type && !action.searchQuery) {
+        if (!action.searchQuery) {
           // if we just cleared out the search bar then immediately update
           updateNotes();
         } else {
