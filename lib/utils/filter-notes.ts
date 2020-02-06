@@ -2,7 +2,9 @@
  * External dependencies
  */
 import { difference, escapeRegExp, get } from 'lodash';
-import { NoteEntity, TagEntity } from '../types';
+
+import * as S from '../state';
+import * as T from '../types';
 
 const tagPattern = () => /(?:\btag:)([^\s,]+)/g;
 
@@ -58,11 +60,11 @@ export const searchPattern = (searchQuery: string) => {
   );
 };
 
-const matchesTrashView = (isViewingTrash: boolean) => (note: NoteEntity) =>
+const matchesTrashView = (isViewingTrash: boolean) => (note: T.NoteEntity) =>
   isViewingTrash === !!get(note, 'data.deleted', false);
 
-const makeMatchesTag = (tag: TagEntity, searchQuery = '') => (
-  note: NoteEntity
+const makeMatchesTag = (tag: T.TagEntity | undefined, searchQuery = '') => (
+  note: T.NoteEntity
 ) => {
   let filterTags = [];
   let match;
@@ -108,41 +110,35 @@ const emptyList = Object.freeze([]);
  * @TODO: Pre-index note title in domains/note
  */
 export default function filterNotes(
-  state,
-  notesArray: NoteEntity[] | null = null
+  state: S.State,
+  notesArray: T.NoteEntity[] | null = null
 ) {
   const {
-    appState: {
-      notes, // {[note]} list of all available notes
-      showTrash, // {bool} whether we are looking at the trashed notes
-      tag, // {tag|null} whether we are looking at a specific tag
-    },
-    ui: {
-      searchQuery, // {string} search query from input
-    },
+    appState: { notes, showTrash, tag },
+    ui: { searchQuery },
   } = state;
 
   const notesToFilter = notesArray ? notesArray : notes;
 
   if (null === notesToFilter) {
     // share the reference so the app doesn't re-render on shallow-compare
-    return (emptyList as unknown) as NoteEntity[];
+    return (emptyList as unknown) as T.NoteEntity[];
   }
 
   // skip into some imperative code for performance-critical code
-  const titleMatches: NoteEntity[] = [];
-  const otherMatches: NoteEntity[] = [];
+  const titleMatches: T.NoteEntity[] = [];
+  const otherMatches: T.NoteEntity[] = [];
 
   // reuse these functions for each note
   const matchesTrash = matchesTrashView(showTrash);
   const matchesTag = makeMatchesTag(tag, searchQuery);
   const matchesSearch = makeMatchesSearch(searchQuery);
-  const matchesFilter = (note: NoteEntity) =>
+  const matchesFilter = (note: T.NoteEntity) =>
     matchesTrash(note) &&
     matchesTag(note) &&
     matchesSearch(get(note, ['data', 'content']));
 
-  notesToFilter.forEach((note: NoteEntity) => {
+  notesToFilter.forEach((note: T.NoteEntity) => {
     if (!matchesFilter(note)) {
       return;
     }

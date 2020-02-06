@@ -27,9 +27,17 @@ import insertOrRemoveCheckboxes from './editor/insert-or-remove-checkboxes';
 import { getIpcRenderer } from './utils/electron';
 import analytics from './analytics';
 
+import * as S from './state';
+
 const TEXT_DELIMITER = '\n';
 
-class NoteContentEditor extends Component {
+type StateProps = {
+  searchQuery: string;
+};
+
+type Props = StateProps;
+
+class NoteContentEditor extends Component<Props> {
   static propTypes = {
     content: PropTypes.shape({
       text: PropTypes.string.isRequired,
@@ -62,23 +70,24 @@ class NoteContentEditor extends Component {
     );
   };
 
-  generateDecorators = filter => {
+  generateDecorators = (searchQuery: string) => {
     return new MultiDecorator(
       compact([
-        filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
+        filterHasText(searchQuery) &&
+          matchingTextDecorator(searchPattern(searchQuery)),
         checkboxDecorator(this.replaceRangeWithText),
       ])
     );
   };
 
-  createNewEditorState = (text, filter) => {
+  createNewEditorState = (text: string, searchQuery: string) => {
     const newEditorState = EditorState.createWithContent(
       ContentState.createFromText(text, TEXT_DELIMITER),
-      this.generateDecorators(filter)
+      this.generateDecorators(searchQuery)
     );
 
     // Focus the editor for a new, empty note when not searching
-    if (text === '' && filter === '') {
+    if (text === '' && searchQuery === '') {
       return EditorState.moveFocusToEnd(newEditorState);
     }
     return newEditorState;
@@ -321,7 +330,7 @@ class NoteContentEditor extends Component {
   }
 }
 
-const mapStateToProps = ({ ui: { searchQuery } }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({ ui: { searchQuery } }) => ({
   searchQuery,
 });
 

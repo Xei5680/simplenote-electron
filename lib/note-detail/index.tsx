@@ -56,8 +56,6 @@ export class NoteDetail extends Component {
 
   focusEditor = () => this.focusContentEditor && this.focusContentEditor();
 
-  saveEditorRef = ref => (this.editor = ref);
-
   isValidNote = note => note && note.id;
 
   componentWillReceiveProps(nextProps) {

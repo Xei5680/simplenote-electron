@@ -1,5 +1,5 @@
 import { difference, union } from 'lodash';
-import { AnyAction, combineReducers } from 'redux';
+import { combineReducers } from 'redux';
 import * as A from '../action-types';
 import * as T from '../../types';
 

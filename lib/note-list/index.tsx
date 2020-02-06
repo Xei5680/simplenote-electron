@@ -288,7 +288,7 @@ const renderNote = (
  * @see renderNote
  *
  * @param {Object[]} notes list of filtered notes
- * @param {String} filter search filter
+ * @param {String} searchQuery search filter
  * @param {Number} tagResultsFound number of tag matches to display
  * @returns {Object[]} modified notes list
  */
@@ -338,13 +338,7 @@ export class NoteList extends Component<Props> {
   }
 
   componentDidUpdate(prevProps) {
-    const {
-      closeNote,
-      searchQuery,
-      notes,
-      onSelectNote,
-      selectedNoteId,
-    } = this.props;
+    const { closeNote, searchQuery, notes, selectedNoteId } = this.props;
 
     if (
       prevProps.searchQuery !== searchQuery ||

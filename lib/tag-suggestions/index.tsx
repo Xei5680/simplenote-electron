@@ -1,31 +1,35 @@
 import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 import { search } from '../state/ui/actions';
 
-import { State } from '../state';
+import * as S from '../state';
 import * as T from '../types';
 
 const { setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 
-export class TagSuggestions extends Component {
+type StateProps = {
+  filteredTags: T.TagEntity[];
+  searchQuery: string;
+};
+
+type DispatchProps = {
+  onSearch: (query: string) => any;
+};
+
+type Props = StateProps & DispatchProps;
+
+export class TagSuggestions extends Component<Props> {
   static displayName = 'TagSuggestions';
 
-  static propTypes = {
-    filteredTags: PropTypes.array.isRequired,
-    onSearch: PropTypes.func.isRequired,
-    searchQuery: PropTypes.string.isRequired,
-  };
-
-  updateSearch = filter => {
+  updateSearch = (nextSearch: string) => {
     const { searchQuery, onSearch } = this.props;
 
     // replace last word in current searchQuery with requested tag match
     let newQuery = searchQuery.trim().split(' ');
-    newQuery.splice(-1, 1, filter);
+    newQuery.splice(-1, 1, nextSearch);
     let querystring = newQuery.join(' ');
 
     // add a space at the end so the user can immediately start typing
@@ -133,12 +137,15 @@ export const getMatchingTags = (tags, query) => {
   return lastMatches;
 };
 
-const mapStateToProps = ({ appState: state, ui: { searchQuery } }: State) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState: state,
+  ui: { searchQuery },
+}) => ({
   filteredTags: getMatchingTags(state.tags, searchQuery),
   searchQuery,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   onSearch: query => {
     dispatch(search(query));
     recordEvent('list_notes_searched');
